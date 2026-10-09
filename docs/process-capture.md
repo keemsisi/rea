@@ -6,37 +6,23 @@ selected filesystem state. Use it to compare two direct runs of the same
 scenario, such as an authority build and a reconstruction. It does not replay a
 previous execution or emulate dependencies.
 
-The command runs with the current user's permissions and inherits the host
-environment before applying the scenario's explicit overrides. This is not a
-sandbox. Filesystem observation paths select what REA snapshots; they do not
-restrict what the process can read or write. The inherited environment is not
-recorded, so its influence may remain unknown.
+The command runs with the current user's permissions. This is not a sandbox.
+The child receives only an allowlist of host variables (`PATH`, `HOME`, `USER`,
+`LOGNAME`, `SHELL`, `LANG`, `LC_*`, `TERM`, `TMPDIR`, `TZ`) plus the scenario's
+explicit `environment` and `REA_PROCESS_RUN_ID`; other host variables such as
+API keys and tokens are not passed. Declare any other variable the command
+needs in the scenario. Filesystem observation paths select what REA snapshots;
+they do not restrict what the process can read or write. The dropped host
+environment is not recorded, so its influence may remain unknown.
 
-## Host support
-
-Capturing a new scenario currently requires Linux or macOS and a working
-native PTY backend. Native Windows capture is unavailable because the PTY
-adapter does not yet verify descendant cleanup. The native Job Object controls
-used by other REA providers do not establish PTY capture support. Reinstalling
-the Windows PTY binary does not enable this workflow.
-
-For Linux commands, use Linux REA inside WSL. Adapt the scenario to that host;
-this does not establish capture of a native Windows process tree. Comparing
-existing capture Evidence through the CLI or MCP remains available on Windows
-and does not launch a PTY or the captured target.
-
-On supported capture hosts, a missing or incompatible native PTY binary has a
-different recovery: reinstall REA for the active platform, architecture, and
-Node.js version with optional dependencies enabled. Capability diagnostics
-distinguish this from the Windows capture-adapter limitation.
-
-macOS also requires Apple's Swift compiler through `xcrun` for process
-ownership inspection. REA compiles its packaged, narrow process-inspection
-helper into a private temporary directory before a capture or owned provider
-process starts; the same prerequisite applies to owned provider-process
-supervision on macOS. REA removes that directory when it exits. REA does not
-install Xcode, Command Line Tools, or other software. Capability checks prepare
-this helper before reporting macOS capture as available.
+Over MCP, `capture_process_scenario` is off by default. The operator must set
+`REA_ALLOW_PROGRAM_EXECUTION=1` in the MCP server environment; until then the
+tool returns a structured refusal and starts nothing. Enabling it lets the
+connected agent, including one steered by prompt-injected content, run
+arbitrary programs as the current user. `observe_native_calls`,
+`capture_native_ui_scenario`, `capture_electron_scenario`, and
+`capture_browser_scenario` in `launch` mode share this gate. The CLI is run
+directly by the operator and is not gated.
 
 ## Capture a command
 

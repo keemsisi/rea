@@ -70,6 +70,7 @@ export const run = async (
   const transport = await startMcpTransport(dependencies, session, {
     logger,
     serverLogger,
+    allowProgramExecution: config.value.allowProgramExecution,
     loadOptionalProviders:
       dependencies.loadOptionalProviders ?? loadOptionalObservationProviders,
   });

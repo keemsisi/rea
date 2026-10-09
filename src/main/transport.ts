@@ -19,6 +19,7 @@ interface ServerContext {
   readonly logger: Logger;
   readonly serverLogger: Logger;
   readonly loadOptionalProviders: () => Promise<OptionalProviders>;
+  readonly allowProgramExecution: boolean;
 }
 
 export const startMcpTransport = async (
@@ -70,6 +71,7 @@ export const startMcpTransport = async (
         androidProviders.push(android);
         return (dependencies.createServer ?? createServer)(session, session, {
           logger: serverContext.logger,
+          allowProgramExecution: serverContext.allowProgramExecution,
           ...optionalProviders,
           androidAnalysis: android,
         });

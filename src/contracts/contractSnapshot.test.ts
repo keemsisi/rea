@@ -99,6 +99,7 @@ describe("tool contract surface", () => {
       mutatesSession: true,
       writesFilesystem: true,
       launchesProcess: false,
+      executesCallerSelectedProgram: false,
       accessesNetwork: false,
       changesUiState: false,
       mayDiscardData: false,

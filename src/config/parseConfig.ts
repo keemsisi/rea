@@ -63,6 +63,7 @@ export const parseConfig = (
     hopperTargetKind: env.HOPPER_TARGET_KIND,
     hopperLoaderArgs: loaderArgs.value,
     logLevel: env.REA_LOG_LEVEL,
+    allowProgramExecution: env.REA_ALLOW_PROGRAM_EXECUTION,
     referenceSourcePolicy: { secretPatterns: secretPatterns.value },
   });
 };

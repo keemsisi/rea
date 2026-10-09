@@ -43,6 +43,10 @@ const environmentSchema = z.object({
   REA_LOG_LEVEL: z
     .enum(["trace", "debug", "info", "warn", "error", "fatal", "silent"])
     .default("info"),
+  REA_ALLOW_PROGRAM_EXECUTION: z
+    .enum(["0", "1"])
+    .default("0")
+    .transform((value) => value === "1"),
   REA_REFERENCE_SECRET_PATTERNS_JSON: z.string().default("[]"),
 });
 

@@ -5,6 +5,8 @@ export interface ToolEffects {
   readonly mutatesSession: boolean;
   readonly writesFilesystem: boolean;
   readonly launchesProcess: boolean;
+  /** Runs a program chosen by the caller, so it needs operator opt-in. */
+  readonly executesCallerSelectedProgram: boolean;
   readonly accessesNetwork: boolean;
   readonly changesUiState: boolean;
   readonly mayDiscardData: boolean;
@@ -24,6 +26,7 @@ const effects = (overrides: Partial<ToolEffects> = {}): ToolEffects => ({
   mutatesSession: false,
   writesFilesystem: false,
   launchesProcess: false,
+  executesCallerSelectedProgram: false,
   accessesNetwork: false,
   changesUiState: false,
   mayDiscardData: false,
@@ -189,6 +192,7 @@ export const TOOL_EFFECTS: Readonly<Record<string, ToolEffects>> = {
     mutatesTarget: true,
     mutatesSession: true,
     launchesProcess: true,
+    executesCallerSelectedProgram: true,
     accessesNetwork: true,
     changesUiState: true,
     mayDiscardData: true,
@@ -199,6 +203,7 @@ export const TOOL_EFFECTS: Readonly<Record<string, ToolEffects>> = {
     mutatesSession: true,
     writesFilesystem: true,
     launchesProcess: true,
+    executesCallerSelectedProgram: true,
     accessesNetwork: true,
     changesUiState: true,
     idempotent: false,
@@ -255,6 +260,7 @@ export const TOOL_EFFECTS: Readonly<Record<string, ToolEffects>> = {
     mutatesSession: true,
     writesFilesystem: true,
     launchesProcess: true,
+    executesCallerSelectedProgram: true,
     accessesNetwork: true,
     changesUiState: true,
     mayDiscardData: true,
@@ -304,6 +310,7 @@ export const TOOL_EFFECTS: Readonly<Record<string, ToolEffects>> = {
     mutatesSession: true,
     writesFilesystem: true,
     launchesProcess: true,
+    executesCallerSelectedProgram: true,
     accessesNetwork: true,
     idempotent: false,
   }),
@@ -334,7 +341,7 @@ export const annotationsFromEffects = (
     value.changesUiState ||
     value.mayDiscardData
   ),
-  destructiveHint: value.mayDiscardData,
+  destructiveHint: value.mayDiscardData || value.executesCallerSelectedProgram,
   idempotentHint: value.idempotent,
   openWorldHint: value.launchesProcess || value.accessesNetwork,
 });

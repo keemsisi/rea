@@ -15,5 +15,7 @@ export interface AppConfig {
   readonly hopperTargetKind: "executable" | "database";
   readonly hopperLoaderArgs: readonly string[];
   readonly logLevel: LogLevel;
+  /** Operator opt-in for tools that run caller-selected programs. */
+  readonly allowProgramExecution: boolean;
   readonly referenceSourcePolicy: ReferenceSourcePolicy;
 }

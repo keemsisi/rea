@@ -64,6 +64,14 @@ const actionSchema = z.discriminatedUnion("kind", [
 ]);
 
 /** Input for one explicit, provider-owned Electron runtime experiment. */
+/** Chromium switches that make the browser exec an arbitrary helper program. */
+const isHelperExecutingSwitch = (arg: string): boolean => {
+  const name = (arg.split("=", 1)[0] ?? "").toLowerCase();
+  return /^--?([a-z0-9-]+-)?(launcher|cmd-prefix)$|^--?browser-subprocess-path$/u.test(
+    name,
+  );
+};
+
 export const electronActiveObservationInputSchema = z.strictObject({
   executable_path: pathInputSchema.describe(
     "Absolute local filesystem path for the Electron executable; relative paths are rejected.",
@@ -78,7 +86,13 @@ export const electronActiveObservationInputSchema = z.strictObject({
     ),
   args: z
     .array(
-      z.string().regex(/^[^\0]*$/u, "Electron arguments must not contain NUL"),
+      z
+        .string()
+        .regex(/^[^\0]*$/u, "Electron arguments must not contain NUL")
+        .refine(
+          (arg) => !isHelperExecutingSwitch(arg),
+          "Electron arguments must not use Chromium switches that execute helper programs (--*-launcher, --*-cmd-prefix, --browser-subprocess-path)",
+        ),
     )
     .default([]),
   actions: z.array(actionSchema).default([]),

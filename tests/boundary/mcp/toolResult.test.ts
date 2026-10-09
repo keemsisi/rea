@@ -32,6 +32,7 @@ const contract: ToolContract = {
     mutatesSession: false,
     writesFilesystem: false,
     launchesProcess: false,
+    executesCallerSelectedProgram: false,
     accessesNetwork: false,
     changesUiState: false,
     mayDiscardData: false,
