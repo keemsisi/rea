@@ -28,6 +28,7 @@ itWithCaptureCapability(
   async () => {
     const session = createTestBinarySession(createCacheProvider([]));
     const server = createServer(session, session, {
+      allowProgramExecution: true,
       logger: silentLogger,
     });
     const mcp = new Client({ name: "process-unknown", version: "1.0.0" });

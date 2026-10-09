@@ -87,6 +87,8 @@ export interface CreateServerOptions {
   readonly javascriptRuntimeObservation?: JavaScriptRuntimeObservationPort;
   readonly availabilityPolicy?: () => SessionAvailability;
   readonly optionalProviderLoadFailures?: OptionalProviderLoadFailures;
+  /** Operator opt-in (REA_ALLOW_PROGRAM_EXECUTION); closed when omitted. */
+  readonly allowProgramExecution?: boolean;
 }
 
 const installSessionToolAvailability = (
@@ -141,7 +143,10 @@ const installSessionToolAvailability = (
   };
 };
 
-const createMcpServer = (session: BinarySessionPort | undefined): McpServer =>
+const createMcpServer = (
+  session: BinarySessionPort | undefined,
+  allowProgramExecution: boolean,
+): McpServer =>
   new EvidenceMcpServer(
     {
       name: PRODUCT_IDENTITY.mcpServerKey,
@@ -157,6 +162,7 @@ const createMcpServer = (session: BinarySessionPort | undefined): McpServer =>
     session === undefined
       ? undefined
       : (evidence) => session.recordEvidence(evidence),
+    allowProgramExecution,
   );
 
 /**
@@ -171,7 +177,10 @@ export const createServer = (
 ): McpServer => {
   const startedAt = new Date().toISOString();
   const logger = options.logger ?? silentLogger;
-  const server = createMcpServer(session);
+  const server = createMcpServer(
+    session,
+    options.allowProgramExecution === true,
+  );
   const android = options.androidAnalysis ?? createAndroidAnalysisProvider();
   const availability = installSessionToolAvailability(server, session, options);
   const toolLogger = logger.child({ layer: "server" });

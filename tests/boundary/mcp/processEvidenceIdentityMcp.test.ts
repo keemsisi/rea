@@ -60,7 +60,9 @@ const connectedComparison = async () => {
   const session = createTestBinarySession(() => {
     throw new Error("Process comparison must not launch a provider");
   });
-  const server = createServer(session, session);
+  const server = createServer(session, session, {
+    allowProgramExecution: true,
+  });
   const client = new Client({
     name: "process-evidence-identity",
     version: "1",

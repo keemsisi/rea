@@ -45,6 +45,7 @@ it("keeps a replacement server usable after the SDK discards its discovery probe
   const transport = await startMcpTransport(runtime, session, {
     logger: silentLogger,
     serverLogger: silentLogger,
+    allowProgramExecution: false,
     loadOptionalProviders: async () => ({}),
   });
   if (!transport.ok) throw new Error("Transport failed");

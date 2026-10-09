@@ -57,7 +57,7 @@ const boot = async (factories: OptionalObservationFactories) => {
   const exitCodes: number[] = [];
   expect(
     await run({
-      env: {},
+      env: { REA_ALLOW_PROGRAM_EXECUTION: "1" },
       loadOptionalProviders: async () => loaded,
       createServer: (analysis, selectedSession, options) => {
         session = selectedSession;

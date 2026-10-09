@@ -293,6 +293,7 @@ const toolAvailabilityFacts = {
     mutatesSession: z.boolean(),
     writesFilesystem: z.boolean(),
     launchesProcess: z.boolean(),
+    executesCallerSelectedProgram: z.boolean(),
     accessesNetwork: z.boolean(),
     changesUiState: z.boolean(),
     mayDiscardData: z.boolean(),

@@ -149,6 +149,7 @@ describe("browser scenario MCP tool", () => {
       close: () => Promise.resolve(),
     }));
     const server = createServer(session, session, {
+      allowProgramExecution: true,
       browserObservation: new CdpBrowserProvider(),
       browserScenarioCapture: provider,
       availabilityPolicy: () => ({

@@ -32,6 +32,20 @@ running as the same operating-system user. Opening an untrusted binary
 delegates parsing and analysis to the selected local provider with that user's
 permissions.
 
+Tools that run a program chosen by the MCP caller are off by default:
+`capture_process_scenario`, `observe_native_calls`,
+`capture_native_ui_scenario`, `capture_electron_scenario`, and
+`capture_browser_scenario` in `launch` mode (which takes an `executable_path`).
+They return a structured refusal and start nothing until the operator sets
+`REA_ALLOW_PROGRAM_EXECUTION=1` in the server environment. Enabling it lets the
+connected agent, including one steered by prompt-injected content, run
+arbitrary programs as the current user. `capture_process_scenario` passes the
+child only an allowlist of host environment variables plus the scenario's
+declared `environment`, so host credentials are not inherited, and Electron
+capture rejects Chromium switches that execute helper programs
+(`--*-launcher`, `--*-cmd-prefix`, `--browser-subprocess-path`). The gate and
+these filters reduce accidental and injected execution; they are not a sandbox.
+
 Ghidra sessions use a packaged Java `HeadlessScript`, an isolated temporary
 project, and private home, cache, and runtime directories. REA imports only the
 requested target, bounds startup and protocol messages, requests bounded CPU
