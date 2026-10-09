@@ -82,6 +82,8 @@ const tracer: NativeCallTracer & { calls: number } = {
   },
 };
 
+const gateOpen = { allowProgramExecution: true };
+
 it("routes observe_native_calls through MCP with schema-checked input and output", async () => {
   const directory = await createTestTempDirectory("rea-native-calls-mcp-");
   const path = join(directory, "Tool");
@@ -89,7 +91,7 @@ it("routes observe_native_calls through MCP with schema-checked input and output
   const session = createTestBinarySession(
     new NativeMacOSProvider(new NativeFixtureRunner(), "darwin", tracer),
   );
-  const server = createServer(session, session);
+  const server = createServer(session, session, gateOpen);
   const client = new Client({ name: "native-calls-mcp-test", version: "1" });
   const [clientTransport, serverTransport] =
     InMemoryTransport.createLinkedPair();
@@ -230,7 +232,7 @@ it.each([
     const session = createTestBinarySession(
       new NativeMacOSProvider(new NativeFixtureRunner(), "darwin", tracer),
     );
-    const server = createServer(session, session);
+    const server = createServer(session, session, gateOpen);
     const client = new Client({
       name: "native-calls-partial-mcp-test",
       version: "1",

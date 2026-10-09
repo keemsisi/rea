@@ -178,6 +178,7 @@ it("runs active Electron scenarios with selected paths and inferred working dire
   }));
   const server = createServer(session, session, {
     electronActiveObservation: provider,
+    allowProgramExecution: true,
     availabilityPolicy: () => ({
       processCaptureEnabled: false,
       investigationInputRoots: 0,

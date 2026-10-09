@@ -19,6 +19,10 @@ import { AnalysisResourceConstraintError } from "../domain/analysisErrorCore.js"
 import { projectAnalysisError } from "../domain/analysisErrorProjection.js";
 import { createEvidence } from "../domain/evidence.js";
 import { jsonObjectSchema } from "../domain/jsonValue.js";
+import {
+  programExecutionRefusal,
+  requiresProgramExecution,
+} from "./programExecutionGate.js";
 import { toErrorToolResult } from "./toolResult.js";
 import {
   encodeToolResult,
@@ -33,8 +37,30 @@ export class EvidenceMcpServer extends McpServer {
     private readonly recordEvidence:
       | EvidenceWriter["recordEvidence"]
       | undefined,
+    allowProgramExecution = false,
   ) {
     super(info, options);
+    if (!allowProgramExecution) this.gateProgramExecution();
+  }
+
+  /** Refuse tools that run caller-selected programs before their handler runs. */
+  private gateProgramExecution(): void {
+    const register = this.registerTool.bind(this) as (
+      name: string,
+      config: unknown,
+      handler: (...args: unknown[]) => unknown,
+    ) => unknown;
+    const gated = (
+      name: string,
+      config: unknown,
+      handler: (...args: unknown[]) => unknown,
+    ) =>
+      register(name, config, (...args: unknown[]) =>
+        requiresProgramExecution(name, args[0])
+          ? programExecutionRefusal(name)
+          : handler(...args),
+      );
+    Object.defineProperty(this, "registerTool", { value: gated });
   }
 
   /** Preserve the SDK transport lifecycle while retaining oversized errors. */
