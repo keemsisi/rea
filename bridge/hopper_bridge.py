@@ -553,6 +553,8 @@ def _search_results(document, kind, params):
         if not matches(item[1]):
             continue
         selected.append(item)
+    if not selected:
+        return []
     if kind == "string":
         records = _string_inventory(document)
         return [{"address": address, **records[address]} for address, _ in selected]
